@@ -3,12 +3,14 @@ package com.kelvin.casepix.service.impl;
 import com.kelvin.casepix.model.dto.inclusao.InclusaoChavePixDTO;
 import com.kelvin.casepix.model.dto.inclusao.InclusaoResponseDTO;
 import com.kelvin.casepix.model.entity.ChavePix;
+import com.kelvin.casepix.model.entity.TipoChave;
 import com.kelvin.casepix.repository.ChavePixRepository;
 import com.kelvin.casepix.service.InclusaoChaveService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Service
 public class InclusaoChaveServiceImpl implements InclusaoChaveService {
@@ -24,7 +26,7 @@ public class InclusaoChaveServiceImpl implements InclusaoChaveService {
         return Mono.just(inclusaoChavePixDTO)
                 .map(dto -> {
                     ChavePix chavePix = new ChavePix();
-                    chavePix.setTipoChave(dto.tipoChave());
+                    chavePix.setTipoChave(TipoChave.valueOf(dto.tipoChave().toUpperCase(Locale.ROOT)));
                     chavePix.setValorChave(dto.valorChave());
                     chavePix.setTipoConta(dto.tipoConta());
                     chavePix.setNumeroConta(dto.numeroConta());

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Document
 public class ChavePix {
     private String id;
-    private String tipoChave;
+    private TipoChave tipoChave;
     private String valorChave;
     private String tipoConta;
     private Integer numeroAgencia;
@@ -37,11 +37,11 @@ public class ChavePix {
         this.valorChave = valorChave;
     }
 
-    public String getTipoChave() {
+    public TipoChave getTipoChave() {
         return tipoChave;
     }
 
-    public void setTipoChave(String tipoChave) {
+    public void setTipoChave(TipoChave tipoChave) {
         this.tipoChave = tipoChave;
     }
 
