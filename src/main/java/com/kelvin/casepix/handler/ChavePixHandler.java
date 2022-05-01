@@ -4,6 +4,7 @@ import com.kelvin.casepix.model.dto.error.ErrorDTO;
 import com.kelvin.casepix.model.dto.inclusao.InclusaoChavePixDTO;
 import com.kelvin.casepix.model.dto.inclusao.InclusaoResponseDTO;
 import com.kelvin.casepix.service.InclusaoChaveService;
+import com.kelvin.casepix.service.ValidacaoChaveService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -11,9 +12,11 @@ import reactor.core.publisher.Mono;
 public class ChavePixHandler {
 
     private final InclusaoChaveService inclusaoChaveService;
+    private final ValidacaoChaveService validacaoChaveService;
 
-    public ChavePixHandler(InclusaoChaveService inclusaoChaveService) {
+    public ChavePixHandler(InclusaoChaveService inclusaoChaveService, ValidacaoChaveService validacaoChaveService) {
         this.inclusaoChaveService = inclusaoChaveService;
+        this.validacaoChaveService = validacaoChaveService;
     }
 
     public Mono<ServerResponse> inclusaoHandler(InclusaoChavePixDTO inclusaoChavePixDTO) {
@@ -37,6 +40,17 @@ public class ChavePixHandler {
                 .flatMap(exists -> {
                     if(exists) {
                         return ServerResponse.unprocessableEntity().body(Mono.just(new ErrorDTO(422, "Chave já existente.")), ErrorDTO.class);
+                    }
+                    return this.validaTipoChave(inclusaoChavePixDTO);
+                });
+    }
+
+    private Mono<ServerResponse> validaTipoChave(InclusaoChavePixDTO inclusaoChavePixDTO) {
+        return Mono.just(inclusaoChavePixDTO)
+                .flatMap(dto -> this.validacaoChaveService.validaChave(dto))
+                .flatMap(validacaoErroDTO -> {
+                    if(validacaoErroDTO.isError()) {
+                        return ServerResponse.unprocessableEntity().body(Mono.just(new ErrorDTO(422, validacaoErroDTO.errorMessage())), ErrorDTO.class);
                     }
                     return this.salvarComSucesso(inclusaoChavePixDTO);
                 });
