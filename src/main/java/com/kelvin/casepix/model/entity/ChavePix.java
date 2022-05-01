@@ -10,8 +10,8 @@ public class ChavePix {
     private TipoChave tipoChave;
     private String valorChave;
     private String tipoConta;
-    private Integer numeroAgencia;
-    private Integer numeroConta;
+    private String numeroAgencia;
+    private String numeroConta;
     private String nomeCorrentista;
     private String sobrenomeCorrentista;
     private String numeroDocumento;
@@ -53,19 +53,19 @@ public class ChavePix {
         this.tipoConta = tipoConta;
     }
 
-    public Integer getNumeroAgencia() {
+    public String getNumeroAgencia() {
         return numeroAgencia;
     }
 
-    public void setNumeroAgencia(Integer numeroAgencia) {
+    public void setNumeroAgencia(String numeroAgencia) {
         this.numeroAgencia = numeroAgencia;
     }
 
-    public Integer getNumeroConta() {
+    public String getNumeroConta() {
         return numeroConta;
     }
 
-    public void setNumeroConta(Integer numeroConta) {
+    public void setNumeroConta(String numeroConta) {
         this.numeroConta = numeroConta;
     }
 
