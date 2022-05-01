@@ -32,30 +32,30 @@ public class ValidacaoChaveServiceImpl implements ValidacaoChaveService {
                             }
                         }
                         case CPF -> {
-                            if(!dto.valorChave().matches("^[0-9]*$")) {
+                            if (!dto.valorChave().matches("^[0-9]*$")) {
                                 return new ValidacaoErroDTO(Boolean.TRUE, "CPF deve possuir somente números");
                             }
                             final CPFValidator cpfValidator = new CPFValidator();
                             final List<ValidationMessage> validationMessages = cpfValidator.invalidMessagesFor(dto.valorChave());
-                            if(!validationMessages.isEmpty()) {
+                            if (!validationMessages.isEmpty()) {
                                 return new ValidacaoErroDTO(Boolean.TRUE, this.checkCpfError(validationMessages.get(0).getMessage()));
                             }
                         }
                         case CNPJ -> {
-                            if(!dto.valorChave().matches("^[0-9]*$")) {
+                            if (!dto.valorChave().matches("^[0-9]*$")) {
                                 return new ValidacaoErroDTO(Boolean.TRUE, "CNPJ deve possuir somente números");
                             }
                             final CNPJValidator cnpjValidator = new CNPJValidator();
                             final List<ValidationMessage> validationMessages = cnpjValidator.invalidMessagesFor(dto.valorChave());
-                            if(!validationMessages.isEmpty()) {
+                            if (!validationMessages.isEmpty()) {
                                 return new ValidacaoErroDTO(Boolean.TRUE, this.checkCnpjError(validationMessages.get(0).getMessage()));
                             }
                         }
                         case ALEATORIO -> {
-                            if(!dto.valorChave().matches("^[a-zA-Z0-9]+$")){
+                            if (!dto.valorChave().matches("^[a-zA-Z0-9]+$")) {
                                 return new ValidacaoErroDTO(Boolean.TRUE, "Chave aleatória deve ser alfanumérica");
                             }
-                            if(dto.valorChave().length() > 36){
+                            if (dto.valorChave().length() > 36) {
                                 return new ValidacaoErroDTO(Boolean.TRUE, "Chave aleatória deve ter no máximo 36 caracteres");
                             }
                         }
@@ -64,8 +64,50 @@ public class ValidacaoChaveServiceImpl implements ValidacaoChaveService {
                 });
     }
 
+    @Override
+    public Mono<ValidacaoErroDTO> validaTipoConta(String tipoConta) {
+        return Mono.just(tipoConta)
+                .map(tipo -> {
+                    if (!tipo.equals("corrente") && !tipo.equals("poupança")) {
+                        return new ValidacaoErroDTO(Boolean.TRUE, "Tipo conta deve ser corrente ou poupança");
+                    }
+                    if (tipo.length() > 10) {
+                        return new ValidacaoErroDTO(Boolean.TRUE, "Tipo conta deve ter no máximo 10 caracteres");
+                    }
+                    return new ValidacaoErroDTO(Boolean.FALSE, "");
+                });
+    }
+
+    @Override
+    public Mono<ValidacaoErroDTO> validaNumeroAgencia(String numeroAgencia) {
+        return Mono.just(numeroAgencia)
+                .map(numero -> {
+                    if (!numero.matches("^[0-9]*$")) {
+                        return new ValidacaoErroDTO(Boolean.TRUE, "Número agência deve possuir somente números");
+                    }
+                    if (numero.length() > 4) {
+                        return new ValidacaoErroDTO(Boolean.TRUE, "Número agência deve possuir no máximo 4 caracteres");
+                    }
+                    return new ValidacaoErroDTO(Boolean.FALSE, "");
+                });
+    }
+
+    @Override
+    public Mono<ValidacaoErroDTO> validaNumeroConta(String numeroConta) {
+        return Mono.just(numeroConta)
+                .map(numero -> {
+                    if (!numero.matches("^[0-9]*$")) {
+                        return new ValidacaoErroDTO(Boolean.TRUE, "Número conta deve possuir somente números");
+                    }
+                    if (numero.length() > 8) {
+                        return new ValidacaoErroDTO(Boolean.TRUE, "Número conta deve possuir no máximo 8 caracteres");
+                    }
+                    return new ValidacaoErroDTO(Boolean.FALSE, "");
+                });
+    }
+
     private String checkCpfError(String error) {
-        return switch (error){
+        return switch (error) {
             case "CPFError : INVALID DIGITS" -> "CPF deve conter 11 caracteres";
             case "CPFError : INVALID FORMAT" -> "Formato de CPF inválido";
             case "CPFError : INVALID CHECK DIGITS" -> "CPF inválido";
@@ -75,7 +117,7 @@ public class ValidacaoChaveServiceImpl implements ValidacaoChaveService {
     }
 
     private String checkCnpjError(String error) {
-        return switch (error){
+        return switch (error) {
             case "CNPJError : INVALID DIGITS" -> "CNPJ deve conter 14 caracteres";
             case "CNPJError : INVALID FORMAT" -> "Formato de CNPJ inválido";
             case "CNPJError : INVALID CHECK DIGITS" -> "CNPJ inválido";

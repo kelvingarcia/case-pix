@@ -52,6 +52,39 @@ public class ChavePixHandler {
                     if(validacaoErroDTO.isError()) {
                         return ServerResponse.unprocessableEntity().body(Mono.just(new ErrorDTO(422, validacaoErroDTO.errorMessage())), ErrorDTO.class);
                     }
+                    return this.validaTipoConta(inclusaoChavePixDTO);
+                });
+    }
+
+    private Mono<ServerResponse> validaTipoConta(InclusaoChavePixDTO inclusaoChavePixDTO) {
+        return Mono.just(inclusaoChavePixDTO)
+                .flatMap(dto -> this.validacaoChaveService.validaTipoConta(dto.tipoConta()))
+                .flatMap(validacaoErroDTO -> {
+                    if(validacaoErroDTO.isError()) {
+                        return ServerResponse.unprocessableEntity().body(Mono.just(new ErrorDTO(422, validacaoErroDTO.errorMessage())), ErrorDTO.class);
+                    }
+                    return this.validaNumeroAgencia(inclusaoChavePixDTO);
+                });
+    }
+
+    private Mono<ServerResponse> validaNumeroAgencia(InclusaoChavePixDTO inclusaoChavePixDTO) {
+        return Mono.just(inclusaoChavePixDTO)
+                .flatMap(dto -> this.validacaoChaveService.validaNumeroAgencia(dto.numeroAgencia()))
+                .flatMap(validacaoErroDTO -> {
+                    if(validacaoErroDTO.isError()) {
+                        return ServerResponse.unprocessableEntity().body(Mono.just(new ErrorDTO(422, validacaoErroDTO.errorMessage())), ErrorDTO.class);
+                    }
+                    return this.validaNumeroConta(inclusaoChavePixDTO);
+                });
+    }
+
+    private Mono<ServerResponse> validaNumeroConta(InclusaoChavePixDTO inclusaoChavePixDTO) {
+        return Mono.just(inclusaoChavePixDTO)
+                .flatMap(dto -> this.validacaoChaveService.validaNumeroConta(dto.numeroConta()))
+                .flatMap(validacaoErroDTO -> {
+                    if(validacaoErroDTO.isError()) {
+                        return ServerResponse.unprocessableEntity().body(Mono.just(new ErrorDTO(422, validacaoErroDTO.errorMessage())), ErrorDTO.class);
+                    }
                     return this.salvarComSucesso(inclusaoChavePixDTO);
                 });
     }
