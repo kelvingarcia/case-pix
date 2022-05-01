@@ -40,7 +40,7 @@ public class ValidacaoChaveServiceImpl implements ValidacaoChaveService {
                             final CPFValidator cpfValidator = new CPFValidator();
                             final List<ValidationMessage> validationMessages = cpfValidator.invalidMessagesFor(dto.valorChave());
                             if(!validationMessages.isEmpty()) {
-                                return new ValidacaoErroDTO(Boolean.TRUE, validationMessages.get(0).getMessage());
+                                return new ValidacaoErroDTO(Boolean.TRUE, this.checkCpfError(validationMessages.get(0).getMessage()));
                             }
                         }
                         case CNPJ -> {
@@ -50,7 +50,7 @@ public class ValidacaoChaveServiceImpl implements ValidacaoChaveService {
                             final CNPJValidator cnpjValidator = new CNPJValidator();
                             final List<ValidationMessage> validationMessages = cnpjValidator.invalidMessagesFor(dto.valorChave());
                             if(!validationMessages.isEmpty()) {
-                                return new ValidacaoErroDTO(Boolean.TRUE, validationMessages.get(0).getMessage());
+                                return new ValidacaoErroDTO(Boolean.TRUE, this.checkCnpjError(validationMessages.get(0).getMessage()));
                             }
                         }
                         case CHAVE_ALEATORIA -> {
@@ -58,5 +58,24 @@ public class ValidacaoChaveServiceImpl implements ValidacaoChaveService {
                     }
                     return new ValidacaoErroDTO(Boolean.FALSE, "");
                 });
+    }
+
+    private String checkCpfError(String error) {
+        return switch (error){
+            case "CPFError : INVALID DIGITS" -> "CPF deve conter 11 caracteres";
+            case "CPFError : INVALID FORMAT" -> "Formato de CPF inválido";
+            case "CPFError : INVALID CHECK DIGITS" -> "CPF inválido";
+            case "CPFError : REPEATED DIGITS" -> "Digitos repetidos CPF";
+            default -> "";
+        };
+    }
+
+    private String checkCnpjError(String error) {
+        return switch (error){
+            case "CNPJError : INVALID DIGITS" -> "CNPJ deve conter 14 caracteres";
+            case "CNPJError : INVALID FORMAT" -> "Formato de CNPJ inválido";
+            case "CNPJError : INVALID CHECK DIGITS" -> "CNPJ inválido";
+            default -> "";
+        };
     }
 }
