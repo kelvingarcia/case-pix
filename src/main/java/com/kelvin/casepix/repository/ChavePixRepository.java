@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface ChavePixRepository extends ReactiveCrudRepository<ChavePix, String> {
     Mono<Boolean> existsByValorChave(String valorChave);
+    Mono<Long> countByNumeroDocumento(String numeroDocumento);
 }

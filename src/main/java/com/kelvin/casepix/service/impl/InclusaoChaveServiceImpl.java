@@ -4,18 +4,18 @@ import com.kelvin.casepix.model.dto.inclusao.InclusaoChavePixDTO;
 import com.kelvin.casepix.model.dto.inclusao.InclusaoResponseDTO;
 import com.kelvin.casepix.model.entity.ChavePix;
 import com.kelvin.casepix.repository.ChavePixRepository;
-import com.kelvin.casepix.service.ChavePixService;
+import com.kelvin.casepix.service.InclusaoChaveService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
 @Service
-public class ChavePixServiceImpl implements ChavePixService {
+public class InclusaoChaveServiceImpl implements InclusaoChaveService {
 
     private final ChavePixRepository chavePixRepository;
 
-    public ChavePixServiceImpl(ChavePixRepository chavePixRepository) {
+    public InclusaoChaveServiceImpl(ChavePixRepository chavePixRepository) {
         this.chavePixRepository = chavePixRepository;
     }
 
@@ -41,5 +41,11 @@ public class ChavePixServiceImpl implements ChavePixService {
     @Override
     public Mono<Boolean> existsByChaveValor(String chaveValor) {
         return this.chavePixRepository.existsByValorChave(chaveValor);
+    }
+
+    @Override
+    public Mono<Boolean> excedeuQuantidadeDeChaves(String numeroDocumento) {
+        return this.chavePixRepository.countByNumeroDocumento(numeroDocumento)
+                .map(quantidade -> quantidade >= 5l);
     }
 }
