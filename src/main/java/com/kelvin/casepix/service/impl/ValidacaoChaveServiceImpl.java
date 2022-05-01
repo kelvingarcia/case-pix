@@ -22,6 +22,22 @@ public class ValidacaoChaveServiceImpl implements ValidacaoChaveService {
                     final TipoChave tipoChave = TipoChave.valueOf(dto.tipoChave().toUpperCase(Locale.ROOT));
                     switch (tipoChave) {
                         case CELULAR -> {
+                            if (!inclusaoChavePixDTO.valorChave().startsWith("+")) {
+                                return new ValidacaoErroDTO(Boolean.TRUE, "Celular deve iniciar com +");
+                            }
+                            final String[] camposCelular = inclusaoChavePixDTO.valorChave().substring(1).split(" ");
+                            if (camposCelular.length != 3) {
+                                return new ValidacaoErroDTO(Boolean.TRUE, "Celular não formatado corretamente");
+                            }
+                            if (!camposCelular[0].matches("^[0-9]*$") && camposCelular[0].length() > 2) {
+                                return new ValidacaoErroDTO(Boolean.TRUE, "Celular: código país deve ser numérico e ter no máximo 2 caracteres");
+                            }
+                            if (!camposCelular[1].matches("^[0-9]*$") && camposCelular[1].length() > 3) {
+                                return new ValidacaoErroDTO(Boolean.TRUE, "Celular: DDD deve ser numérico e ter no máximo 3 caracteres");
+                            }
+                            if (!camposCelular[2].replace("-", "").matches("^[0-9]*$") && camposCelular[2].replace("-", "").length() > 9) {
+                                return new ValidacaoErroDTO(Boolean.TRUE, "Celular: deve ser numérico e ter no máximo 9 caracteres");
+                            }
                         }
                         case EMAIL -> {
                             if (!dto.valorChave().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
