@@ -1,8 +1,6 @@
 package com.kelvin.casepix.service.impl;
 
 import br.com.caelum.stella.ValidationMessage;
-import br.com.caelum.stella.format.CNPJFormatter;
-import br.com.caelum.stella.format.CPFFormatter;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import com.kelvin.casepix.model.dto.error.ValidacaoErroDTO;
@@ -53,7 +51,13 @@ public class ValidacaoChaveServiceImpl implements ValidacaoChaveService {
                                 return new ValidacaoErroDTO(Boolean.TRUE, this.checkCnpjError(validationMessages.get(0).getMessage()));
                             }
                         }
-                        case CHAVE_ALEATORIA -> {
+                        case ALEATORIO -> {
+                            if(!dto.valorChave().matches("^[a-zA-Z0-9]+$")){
+                                return new ValidacaoErroDTO(Boolean.TRUE, "Chave aleatória deve ser alfanumérica");
+                            }
+                            if(dto.valorChave().length() > 36){
+                                return new ValidacaoErroDTO(Boolean.TRUE, "Chave aleatória deve ter no máximo 36 caracteres");
+                            }
                         }
                     }
                     return new ValidacaoErroDTO(Boolean.FALSE, "");

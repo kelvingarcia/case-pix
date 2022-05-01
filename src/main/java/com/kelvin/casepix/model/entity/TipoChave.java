@@ -5,5 +5,5 @@ public enum TipoChave {
     EMAIL,
     CPF,
     CNPJ,
-    CHAVE_ALEATORIA
+    ALEATORIO
 }
