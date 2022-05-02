@@ -41,6 +41,11 @@
 			<artifactId>caelum-stella-core</artifactId>
 			<version>2.1.2</version>
 		</dependency>
+		<dependency>
+			<groupId>io.projectreactor.tools</groupId>
+			<artifactId>blockhound-junit-platform</artifactId>
+			<version>1.0.6.RELEASE</version>
+		</dependency>
 	</dependencies>
 
 	<build>

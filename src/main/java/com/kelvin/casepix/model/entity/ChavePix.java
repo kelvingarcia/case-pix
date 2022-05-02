@@ -3,10 +3,11 @@ package com.kelvin.casepix.model.entity;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Document
 public class ChavePix {
-    private String id;
+    private UUID id;
     private TipoChave tipoChave;
     private String valorChave;
     private String tipoConta;
@@ -21,11 +22,11 @@ public class ChavePix {
     public ChavePix() {
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

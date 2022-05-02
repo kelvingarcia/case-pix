@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.UUID;
 
 @Service
 public class InclusaoChaveServiceImpl implements InclusaoChaveService {
@@ -26,6 +27,7 @@ public class InclusaoChaveServiceImpl implements InclusaoChaveService {
         return Mono.just(inclusaoChavePixDTO)
                 .map(dto -> {
                     ChavePix chavePix = new ChavePix();
+                    chavePix.setId(UUID.randomUUID());
                     chavePix.setTipoChave(TipoChave.valueOf(dto.tipoChave().toUpperCase(Locale.ROOT)));
                     chavePix.setValorChave(dto.valorChave());
                     chavePix.setTipoConta(dto.tipoConta());
@@ -38,7 +40,7 @@ public class InclusaoChaveServiceImpl implements InclusaoChaveService {
                     return chavePix;
                 })
                 .flatMap(chavePix -> this.chavePixRepository.save(chavePix))
-                .map(chavePix -> new InclusaoResponseDTO(chavePix.getId()));
+                .map(chavePix -> new InclusaoResponseDTO(chavePix.getId().toString()));
     }
     @Override
     public Mono<Boolean> existsByChaveValor(String chaveValor) {
