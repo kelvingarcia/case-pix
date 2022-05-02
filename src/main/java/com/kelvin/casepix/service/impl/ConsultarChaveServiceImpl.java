@@ -32,7 +32,7 @@ public class ConsultarChaveServiceImpl implements ConsultarChaveService {
     public Mono<ConsultaResponseDTO> consultaPorId(UUID idChave) {
         return Mono.just(idChave)
                 .flatMap(id -> this.chavePixRepository.findById(idChave))
-                .switchIfEmpty(Mono.error(new ChavePixNotFoundException("Id não encontrado")))
+                .switchIfEmpty(Mono.error(new ChavePixNotFoundException("Valores não encontrados")))
                 .map(chavePix -> new ConsultaResponseDTO(chavePix.getId(), chavePix.getTipoChave(), chavePix.getValorChave(),
                         chavePix.getTipoConta(), chavePix.getNumeroAgencia(), chavePix.getNumeroConta(), chavePix.getNomeCorrentista(),
                         chavePix.getSobrenomeCorrentista(), chavePix.getDataHoraInclusao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
@@ -55,13 +55,14 @@ public class ConsultarChaveServiceImpl implements ConsultarChaveService {
                         query.addCriteria(Criteria.where("nomeCorrentista").is(chavePix.getNomeCorrentista()));
                     }
                     if(chavePix.getDataHoraInclusao() != null) {
-                        query.addCriteria(Criteria.where("dataHoraInclusao").is(chavePix.getDataHoraInclusao()));
+                        query.addCriteria(Criteria.where("dataHoraInclusao").gte(chavePix.getDataHoraInclusao()).lt(chavePix.getDataHoraInclusao().plusDays(1l)));
                     }
                     if(chavePix.getDataHoraInativacao() != null) {
-                        query.addCriteria(Criteria.where("dataHoraInativacao").is(chavePix.getDataHoraInativacao()));
+                        query.addCriteria(Criteria.where("dataHoraInativacao").gte(chavePix.getDataHoraInativacao()).lt(chavePix.getDataHoraInativacao().plusDays(1l)));
                     }
                     return this.mongoTemplate.find(query, ChavePix.class);
                 })
+                .switchIfEmpty(Flux.error(new ChavePixNotFoundException("Valores não encontrados")))
                 .map(chavePix -> new ConsultaResponseDTO(chavePix.getId(), chavePix.getTipoChave(), chavePix.getValorChave(),
                         chavePix.getTipoConta(), chavePix.getNumeroAgencia(), chavePix.getNumeroConta(), chavePix.getNomeCorrentista(),
                         chavePix.getSobrenomeCorrentista(), chavePix.getDataHoraInclusao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),

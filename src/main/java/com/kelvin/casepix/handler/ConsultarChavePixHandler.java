@@ -1,5 +1,6 @@
 package com.kelvin.casepix.handler;
 
+import com.kelvin.casepix.exception.ChavePixNotFoundException;
 import com.kelvin.casepix.exception.ConsultarValoresException;
 import com.kelvin.casepix.model.dto.consulta.ConsultaResponseDTO;
 import com.kelvin.casepix.model.dto.error.ErrorDTO;
@@ -12,6 +13,9 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -55,6 +59,12 @@ public class ConsultarChavePixHandler {
                         chavePixAux.setNumeroAgencia(numeroAgencia);
                         chavePixAux.setNumeroConta(numeroConta);
                         chavePixAux.setNomeCorrentista(nomeCorrentista);
+                        if (dataInclusao != null) {
+                            chavePixAux.setDataHoraInclusao(LocalDate.parse(dataInclusao, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay());
+                        }
+                        if(dataInativacao != null) {
+                            chavePixAux.setDataHoraInativacao(LocalDate.parse(dataInativacao, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay());
+                        }
                         return Mono.just(this.consultarChaveService.consultarPorFiltros(chavePixAux));
                     }
                 })
@@ -63,7 +73,10 @@ public class ConsultarChavePixHandler {
                     if(e instanceof ConsultarValoresException){
                         return ServerResponse.unprocessableEntity().body(Mono.just(new ErrorDTO(422, e.getMessage())), ErrorDTO.class);
                     }
-                    return ServerResponse.notFound().build();
+                    if(e instanceof ChavePixNotFoundException) {
+                        return ServerResponse.notFound().build();
+                    }
+                    return Mono.error(e);
                 });
     }
 }
