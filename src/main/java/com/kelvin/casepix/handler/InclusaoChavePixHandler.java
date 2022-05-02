@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 @Component
-public class ChavePixHandler {
+public class InclusaoChavePixHandler {
 
     private final InclusaoChaveService inclusaoChaveService;
     private final ValidacaoChaveService validacaoChaveService;
 
-    public ChavePixHandler(InclusaoChaveService inclusaoChaveService, ValidacaoChaveService validacaoChaveService) {
+    public InclusaoChavePixHandler(InclusaoChaveService inclusaoChaveService, ValidacaoChaveService validacaoChaveService) {
         this.inclusaoChaveService = inclusaoChaveService;
         this.validacaoChaveService = validacaoChaveService;
     }

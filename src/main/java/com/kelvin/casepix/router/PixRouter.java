@@ -1,6 +1,6 @@
 package com.kelvin.casepix.router;
 
-import com.kelvin.casepix.handler.ChavePixHandler;
+import com.kelvin.casepix.handler.InclusaoChavePixHandler;
 import com.kelvin.casepix.model.dto.inclusao.InclusaoChavePixDTO;
 import com.kelvin.casepix.model.entity.ChavePix;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,7 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 @Configuration
 public class PixRouter {
     @Bean
-    public RouterFunction<ServerResponse> routes(ChavePixHandler handler) {
+    public RouterFunction<ServerResponse> routes(InclusaoChavePixHandler handler) {
         return route()
             .GET("/list-chave", req -> ok().body(Mono.just(new ChavePix()), ChavePix.class))
             .POST("/incluir", req -> req.bodyToMono(InclusaoChavePixDTO.class).flatMap(dto -> handler.inclusaoHandler(dto)))
