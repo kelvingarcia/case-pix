@@ -29,13 +29,16 @@ public class ValidacaoChaveServiceImpl implements ValidacaoChaveService {
                             if (camposCelular.length != 3) {
                                 return new ValidacaoErroDTO(Boolean.TRUE, "Celular não formatado corretamente");
                             }
-                            if (!camposCelular[0].matches("^[0-9]*$") && camposCelular[0].length() > 2) {
+                            if (!camposCelular[2].contains("-")) {
+                                return new ValidacaoErroDTO(Boolean.TRUE, "Celular não formatado corretamente");
+                            }
+                            if (!camposCelular[0].matches("^[0-9]*$") || camposCelular[0].length() > 2) {
                                 return new ValidacaoErroDTO(Boolean.TRUE, "Celular: código país deve ser numérico e ter no máximo 2 caracteres");
                             }
-                            if (!camposCelular[1].matches("^[0-9]*$") && camposCelular[1].length() > 3) {
+                            if (!camposCelular[1].matches("^[0-9]*$") || camposCelular[1].length() > 3) {
                                 return new ValidacaoErroDTO(Boolean.TRUE, "Celular: DDD deve ser numérico e ter no máximo 3 caracteres");
                             }
-                            if (!camposCelular[2].replace("-", "").matches("^[0-9]*$") && camposCelular[2].replace("-", "").length() > 9) {
+                            if (!camposCelular[2].replace("-", "").matches("^[0-9]*$") || camposCelular[2].replace("-", "").length() > 9) {
                                 return new ValidacaoErroDTO(Boolean.TRUE, "Celular: deve ser numérico e ter no máximo 9 caracteres");
                             }
                         }
