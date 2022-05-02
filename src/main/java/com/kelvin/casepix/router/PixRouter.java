@@ -23,7 +23,7 @@ public class PixRouter {
     @Bean
     public RouterFunction<ServerResponse> routes(InclusaoChavePixHandler handler, AlteracaoChavePixHandler alteracaoHandler, ConsultarChavePixHandler consultarHandler) {
         return route()
-            .GET("/consultar", consultarHandler::consultar)
+            .GET("/consultar", req -> consultarHandler.validaConsultar(req))
             .POST("/incluir", req -> req.bodyToMono(InclusaoChavePixDTO.class).flatMap(dto -> handler.inclusaoHandler(dto)))
             .PUT("/alterar", req -> req.bodyToMono(AlteracaoChaveDTO.class).flatMap(dto -> alteracaoHandler.alterarChave(dto)))
             .build();

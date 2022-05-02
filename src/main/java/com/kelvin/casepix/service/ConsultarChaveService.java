@@ -1,15 +1,15 @@
 package com.kelvin.casepix.service;
 
 import com.kelvin.casepix.model.dto.consulta.ConsultaResponseDTO;
-import com.kelvin.casepix.model.entity.ChavePix;
-import com.kelvin.casepix.model.entity.TipoChave;
+import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface ConsultarChaveService {
-    Mono<ConsultaResponseDTO> consultaPorId(UUID id);
-    Flux<ConsultaResponseDTO> consultarPorFiltros(ChavePix chavePixAux);
+    Mono<ConsultaResponseDTO> consultaPorId(UUID idChave);
+    Flux<ConsultaResponseDTO> consultarPorFiltros(Query query);
+    Mono<Boolean> containsPorId(UUID idChave);
+    Mono<Boolean> containsPorFiltros(Query query);
 }

@@ -1,24 +1,21 @@
 package com.kelvin.casepix.service.impl;
 
-import com.kelvin.casepix.exception.ChavePixNotFoundException;
 import com.kelvin.casepix.model.dto.consulta.ConsultaResponseDTO;
 import com.kelvin.casepix.model.entity.ChavePix;
-import com.kelvin.casepix.model.entity.TipoChave;
 import com.kelvin.casepix.repository.ChavePixRepository;
 import com.kelvin.casepix.service.ConsultarChaveService;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import org.springframework.data.mongodb.core.query.Query;
-import java.time.LocalDateTime;
+
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
-public class ConsultarChaveServiceImpl implements ConsultarChaveService {
+public class ConsultarChaveServiceImpl implements ConsultarChaveService{
 
     private final ChavePixRepository chavePixRepository;
     private final ReactiveMongoTemplate mongoTemplate;
@@ -32,7 +29,6 @@ public class ConsultarChaveServiceImpl implements ConsultarChaveService {
     public Mono<ConsultaResponseDTO> consultaPorId(UUID idChave) {
         return Mono.just(idChave)
                 .flatMap(id -> this.chavePixRepository.findById(idChave))
-                .switchIfEmpty(Mono.error(new ChavePixNotFoundException("Valores não encontrados")))
                 .map(chavePix -> new ConsultaResponseDTO(chavePix.getId(), chavePix.getTipoChave(), chavePix.getValorChave(),
                         chavePix.getTipoConta(), chavePix.getNumeroAgencia(), chavePix.getNumeroConta(), chavePix.getNomeCorrentista(),
                         chavePix.getSobrenomeCorrentista(), chavePix.getDataHoraInclusao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
@@ -40,32 +36,20 @@ public class ConsultarChaveServiceImpl implements ConsultarChaveService {
     }
 
     @Override
-    public Flux<ConsultaResponseDTO> consultarPorFiltros(ChavePix chavePixAux) {
-        return Mono.just(chavePixAux)
-                .flatMapMany(chavePix -> {
-                    final Query query = new Query();
-                    if(chavePix.getTipoChave() != null) {
-                        query.addCriteria(Criteria.where("tipoChave").is(chavePix.getTipoChave()));
-                    }
-                    if(chavePix.getNumeroAgencia() != null && chavePix.getNumeroConta() != null) {
-                        query.addCriteria(Criteria.where("numeroAgencia").is(chavePix.getNumeroAgencia()));
-                        query.addCriteria(Criteria.where("numeroConta").is(chavePix.getNumeroConta()));
-                    }
-                    if(chavePix.getNomeCorrentista() != null) {
-                        query.addCriteria(Criteria.where("nomeCorrentista").is(chavePix.getNomeCorrentista()));
-                    }
-                    if(chavePix.getDataHoraInclusao() != null) {
-                        query.addCriteria(Criteria.where("dataHoraInclusao").gte(chavePix.getDataHoraInclusao()).lt(chavePix.getDataHoraInclusao().plusDays(1l)));
-                    }
-                    if(chavePix.getDataHoraInativacao() != null) {
-                        query.addCriteria(Criteria.where("dataHoraInativacao").gte(chavePix.getDataHoraInativacao()).lt(chavePix.getDataHoraInativacao().plusDays(1l)));
-                    }
-                    return this.mongoTemplate.find(query, ChavePix.class);
-                })
-                .switchIfEmpty(Flux.error(new ChavePixNotFoundException("Valores não encontrados")))
+    public Flux<ConsultaResponseDTO> consultarPorFiltros(Query query) {
+        return this.mongoTemplate.find(query, ChavePix.class)
                 .map(chavePix -> new ConsultaResponseDTO(chavePix.getId(), chavePix.getTipoChave(), chavePix.getValorChave(),
                         chavePix.getTipoConta(), chavePix.getNumeroAgencia(), chavePix.getNumeroConta(), chavePix.getNomeCorrentista(),
                         chavePix.getSobrenomeCorrentista(), chavePix.getDataHoraInclusao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                         ""));
+    }
+
+    @Override
+    public Mono<Boolean> containsPorId(UUID idChave) {
+        return this.chavePixRepository.existsById(idChave);
+    }
+    @Override
+    public Mono<Boolean> containsPorFiltros(Query query) {
+        return this.mongoTemplate.exists(query, ChavePix.class);
     }
 }
