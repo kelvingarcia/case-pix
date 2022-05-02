@@ -9,4 +9,6 @@ public interface ValidacaoChaveService {
     Mono<ValidacaoErroDTO> validaTipoConta(String tipoConta);
     Mono<ValidacaoErroDTO> validaNumeroAgencia(String numeroAgencia);
     Mono<ValidacaoErroDTO> validaNumeroConta(String numeroConta);
+    Mono<ValidacaoErroDTO> validaNomeCorrentista(String nomeCorrentista);
+    Mono<ValidacaoErroDTO> validaSobrenomeCorrentista(String nomeCorrentista);
 }

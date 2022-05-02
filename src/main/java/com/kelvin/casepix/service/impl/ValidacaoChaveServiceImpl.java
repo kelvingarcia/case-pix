@@ -125,6 +125,28 @@ public class ValidacaoChaveServiceImpl implements ValidacaoChaveService {
                 });
     }
 
+    @Override
+    public Mono<ValidacaoErroDTO> validaNomeCorrentista(String nomeCorrentista) {
+        return Mono.just(nomeCorrentista)
+                .map(nome -> {
+                    if(nome.length() > 30) {
+                        return new ValidacaoErroDTO(Boolean.TRUE, "Nome somente pode conter 30 caracteres");
+                    }
+                    return new ValidacaoErroDTO(Boolean.FALSE, "");
+                });
+    }
+
+    @Override
+    public Mono<ValidacaoErroDTO> validaSobrenomeCorrentista(String nomeCorrentista) {
+        return Mono.just(nomeCorrentista)
+                .map(nome -> {
+                    if(nome.length() > 45) {
+                        return new ValidacaoErroDTO(Boolean.TRUE, "Sobrenome somente pode conter 45 caracteres");
+                    }
+                    return new ValidacaoErroDTO(Boolean.FALSE, "");
+                });
+    }
+
     private String checkCpfError(String error) {
         return switch (error) {
             case "CPFError : INVALID DIGITS" -> "CPF deve conter 11 caracteres";
